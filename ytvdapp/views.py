@@ -1,0 +1,24 @@
+from django.shortcuts import render, redirect
+from django.http import HttpResponse
+import youtube_dl
+from django.contrib import messages
+from pytube import YouTube
+# Create your views here.
+def home(request):
+    return render(request, "ytvdapp\home.html")
+
+
+def download_video(request):
+    if request.method == "POST":
+        video_url = request.POST["url"]
+        demo=YouTube(video_url)
+        if video_url:
+            ydl_opts = {"outtmp1": "D:/"}
+            with youtube_dl.YoutubeDL(ydl_opts) as ydl:
+                ydl.download([video_url])
+            messages.success(request, "Video Downloaded.")
+            return redirect("home")
+        else:
+            messages.warning(request, "Please Enter Video URL")
+            return redirect("home")
+    return redirect("home")
